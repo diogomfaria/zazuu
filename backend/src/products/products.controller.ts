@@ -15,8 +15,8 @@ export class ProductsController {
     }
 
     @Get()
-    findAll(@Query() filters: FilterProductDto) {
-        return this.productsService.findAll(filters);
+    findAll(@Query() filters: FilterProductDto, @Request() req) {
+        return this.productsService.findAll(filters, req.user.id);
     }
 
     @Put(':id')
