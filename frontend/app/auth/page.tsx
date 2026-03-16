@@ -1,14 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Button, Input, VStack, Heading, Text, Tabs, Container, createToaster } from '@chakra-ui/react';
+import { 
+    Box, VStack, Heading, Text, Input, Button, Tabs, Container
+} from '@chakra-ui/react';
+import { LogIn, UserPlus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/services/api';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import { toaster } from '@/components/ui/toaster';
 import { Logo } from '@/components/logo';
-
-const toaster = createToaster({ placement: 'bottom-end' });
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
@@ -48,23 +49,27 @@ export default function AuthPage() {
     };
 
     return (
-        <Box minH="100vh" bg="brand.bg" className="font-outfit" py={32}>
-            <Container maxW="md">
+        <Box minH="100vh" bg={{ base: 'white', md: 'brand.bg' }} className="font-outfit" py={{ base: 0, md: 32 }}>
+            <Container maxW={{ base: 'full', md: 'md' }} p={{ base: 0, md: 4 }}>
                 <MotionBox 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, ease: "easeOut" }}
-                    p={12} 
-                    borderRadius="3xl" 
-                    boxShadow="subtle" 
+                    p={{ base: 8, md: 12 }} 
+                    borderRadius={{ base: 'none', md: '3xl' }} 
+                    boxShadow={{ base: 'none', md: 'subtle' }} 
                     w="100%" 
+                    minH={{ base: '100vh', md: 'auto' }}
                     bg="white"
-                    border="1px solid"
+                    border={{ base: 'none', md: '1px solid' }}
                     borderColor="gray.100"
+                    display="flex"
+                    flexDir="column"
+                    justifyContent={{ base: 'center', md: 'flex-start' }}
                 >
-                    <VStack mb={8} gap={2}>
+                    <VStack mb={{ base: 6, md: 8 }} gap={2} w="full">
                         <Logo width={160} height={60} />
-                        <Text color="gray.500" fontSize="lg">Gerencie seus produtos pet</Text>
+                        <Text color="gray.500" fontSize={{ base: "md", md: "lg" }} textAlign="center">Gerencie seus produtos pet</Text>
                     </VStack>
 
                     <Tabs.Root value={activeTab} onValueChange={(e) => setActiveTab(e.value)} fitted variant="plain">

@@ -2,12 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import {
-    Button, Input, Textarea, VStack, createToaster, Dialog, Box, Text, Portal
+    Button, Input, Textarea, VStack, Dialog, Box, Text, Portal
 } from '@chakra-ui/react';
 import { api } from '@/services/api';
+import { toaster } from '@/components/ui/toaster';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const toaster = createToaster({ placement: 'bottom-end' });
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
@@ -56,10 +55,10 @@ function ProductForm({ productToEdit, onSuccess, onClose }: ProductFormProps) {
 
             if (productToEdit) {
                 await api.put(`/products/${productToEdit.id}`, payload);
-                toaster.create({ title: 'Produto atualizado!', type: 'success' });
+                toaster.create({ title: 'Alterações salvas com sucesso', type: 'success' });
             } else {
                 await api.post('/products', payload);
-                toaster.create({ title: 'Produto cadastrado!', type: 'success' });
+                toaster.create({ title: 'Produto cadastrado com sucesso', type: 'success' });
             }
 
             onSuccess();

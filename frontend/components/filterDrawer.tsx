@@ -74,7 +74,7 @@ export function FilterDrawer({ isOpen, onClose, filters, onApply, onReset }: Fil
                         bg="white" 
                         p={0} 
                         h="100vh"
-                        maxW="400px"
+                        maxW={{ base: '100vw', md: '400px' }}
                         boxShadow="-10px 0 30px rgba(0,0,0,0.05)"
                         border="none"
                     >

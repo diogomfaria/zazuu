@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import {
     Box, Container, Heading, Button, Table,
-    Input, HStack, useDisclosure, IconButton, createToaster,
-    Skeleton, VStack, Text
+    Input, HStack, useDisclosure, IconButton,
+    Skeleton, VStack, Text, Stack
 } from '@chakra-ui/react';
 import { Plus, Search, Trash2, Edit3, LogOut, Filter } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -12,10 +12,13 @@ import { api } from '@/services/api';
 import { ProductModal } from '@/components/productModal';
 import { ConfirmationModal } from '@/components/confirmationModal';
 import { FilterDrawer } from '@/components/filterDrawer';
+import { EmptyState } from '@/components/emptyState';
+import { TableSkeleton } from '@/components/tableSkeleton';
+import { CardSkeleton } from '@/components/cardSkeleton';
+import { ProductCard } from '@/components/productCard';
+import { toaster } from '@/components/ui/toaster';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Logo } from '@/components/logo';
-
-const toaster = createToaster({ placement: 'bottom-end' });
 
 const MotionButton = motion(Button);
 const MotionTableRow = motion(Table.Row);
@@ -108,11 +111,11 @@ export default function DashboardPage() {
         try {
             await api.delete(`/products/${productToDelete.id}`);
             setProducts((prev) => prev.filter(p => p.id !== productToDelete.id));
-            toaster.create({ title: 'Produto removido com segurança', type: 'success' });
+            toaster.create({ title: 'Produto removido com sucesso', type: 'success' });
             deleteModal.onClose();
         } catch (error: any) {
             toaster.create({
-                title: 'Erro ao remover',
+                title: 'Erro na operação',
                 description: error.response?.data?.message || 'Tente novamente',
                 type: 'error'
             });
@@ -143,10 +146,16 @@ export default function DashboardPage() {
     };
 
     return (
-        <Box minH="100vh" bg="brand.bg" py={12} className="font-outfit">
-            <Container maxW="container.xl">
+        <Box minH="100vh" bg="brand.bg" py={{ base: 6, md: 12 }} className="font-outfit">
+            <Container maxW="1200px" mx="auto" px={{ base: 4, md: 6 }}>
                 {/* Header Section */}
-                <HStack justify="space-between" mb={12} align="end">
+                <HStack
+                    justify="space-between"
+                    mb={{ base: 8, md: 12 }}
+                    align={{ base: 'start', md: 'end' }}
+                    flexDir={{ base: 'column', md: 'row' }}
+                    gap={{ base: 6, md: 0 }}
+                >
                     <MotionBox
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -161,38 +170,19 @@ export default function DashboardPage() {
                         </VStack>
                     </MotionBox>
 
-                    <HStack gap={4}>
-                        <MotionButton
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.2, type: "spring", stiffness: 400, damping: 25 }}
-                            whileHover={{ scale: 1.02, translateY: -2, boxShadow: "0 10px 20px rgba(193, 226, 69, 0.2)" }}
-                            whileTap={{ scale: 0.98 }}
-                            bg="zazuu.lime"
-                            color="#292929"
-                            rounded="full"
-                            px={8}
-                            h="56px"
-                            fontWeight="bold"
-                            boxShadow="subtle"
-                            onClick={handleNewClick}
-                            _hover={{ bg: '#c1e245' }}
-                        >
-                            <Plus size={20} style={{ marginRight: '8px' }} /> Novo Produto
-                        </MotionButton>
-                        <MotionButton
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.4 }}
-                            whileHover={{ color: 'red.500', scale: 1.05 }}
-                            variant="ghost"
-                            onClick={handleLogout}
-                            color="zazuu.purple"
-                            _hover={{ bg: 'white' }}
-                        >
-                            <LogOut size={18} style={{ marginRight: '8px' }} /> Sair
-                        </MotionButton>
-                    </HStack>
+                    <MotionButton
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                        whileHover={{ color: 'red.500', scale: 1.05 }}
+                        variant="ghost"
+                        onClick={handleLogout}
+                        color="zazuu.purple"
+                        _hover={{ bg: 'white' }}
+                        ml="auto"
+                    >
+                        <LogOut size={18} style={{ marginRight: '8px' }} /> Sair
+                    </MotionButton>
                 </HStack>
 
                 {/* Dashboard Main Card */}
@@ -201,14 +191,14 @@ export default function DashboardPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
                     bg="white"
-                    p={8}
-                    borderRadius="3xl"
+                    p={{ base: 6, md: 8 }}
+                    borderRadius={{ base: '2xl', md: '3xl' }}
                     boxShadow="subtle"
                     border="1px solid"
                     borderColor="gray.100"
                 >
-                    {/* Consolidated Search Bar */}
-                    <HStack mb={8} gap={4}>
+                    {/* Consolidated Search & Actions Bar */}
+                    <Stack mb={8} gap={4} direction={{ base: 'column', md: 'row' }} align="stretch">
                         <Box flex={1} position="relative">
                             <Input
                                 placeholder="Pesquisar por nome, preço ou descrição..."
@@ -234,141 +224,192 @@ export default function DashboardPage() {
                                 <Search size={22} />
                             </Box>
                         </Box>
-                        <Button
-                            variant="outline"
-                            h="56px"
-                            px={6}
-                            rounded="2xl"
-                            borderColor="gray.200"
-                            color="gray.600"
-                            onClick={filterDrawer.onOpen}
-                            _hover={{ bg: 'gray.50' }}
-                        >
-                            <Filter size={18} style={{ marginRight: '8px' }} /> Filtros
-                        </Button>
-                    </HStack>
 
-                    {/* Table Section */}
-                    <Box overflow="hidden" rounded="2xl" border="1px solid" borderColor="gray.100">
-                        <Table.Root variant="line">
-                            <Table.Header>
-                                <Table.Row bg="gray.50/50">
-                                    <Table.ColumnHeader py={6} color="zazuu.purple" fontWeight="bold">PRODUTO</Table.ColumnHeader>
-                                    <Table.ColumnHeader py={6} color="zazuu.purple" fontWeight="bold">DESCRIÇÃO</Table.ColumnHeader>
-                                    <Table.ColumnHeader py={6} color="zazuu.purple" fontWeight="bold" textAlign="end">PREÇO</Table.ColumnHeader>
-                                    <Table.ColumnHeader py={6} color="zazuu.purple" fontWeight="bold" textAlign="end">AÇÕES</Table.ColumnHeader>
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {loading && products.length === 0 ? (
-                                    // Skeleton Loaders
-                                    Array(5).fill(0).map((_, i) => (
-                                        <Table.Row key={`skeleton-${i}`}>
-                                            <Table.Cell py={6}><Skeleton h="20px" w="150px" rounded="md" /></Table.Cell>
-                                            <Table.Cell py={6}><Skeleton h="20px" w="80%" rounded="md" /></Table.Cell>
-                                            <Table.Cell py={6} textAlign="end"><Skeleton h="20px" w="60px" ml="auto" rounded="md" /></Table.Cell>
-                                            <Table.Cell py={6} textAlign="end"><Skeleton h="20px" w="80px" ml="auto" rounded="md" /></Table.Cell>
-                                        </Table.Row>
-                                    ))
-                                ) : (
-                                    <AnimatePresence mode="popLayout">
-                                        {products.length > 0 ? (
-                                            products.map((product, index) => (
-                                                <MotionTableRow 
-                                                    key={product.id}
-                                                    initial={{ opacity: 0, y: 10 }}
-                                                    animate={{ 
-                                                        opacity: 1, 
-                                                        y: 0,
-                                                        transition: { 
-                                                            delay: index * 0.05,
-                                                            duration: 0.5,
-                                                            ease: [0.25, 1, 0.5, 1]
-                                                        }
-                                                    }}
-                                                    exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.2 } as any }}
-                                                    role="group"
-                                                    whileHover={{ 
-                                                        backgroundColor: 'rgba(50, 18, 77, 0.02)',
-                                                        y: -1,
-                                                    }}
-                                                    _hover={{ 
-                                                        boxShadow: 'sm'
-                                                    }}
-                                                    transition={{ 
-                                                        duration: 0.4, 
-                                                        ease: [0.25, 1, 0.5, 1] 
-                                                    } as any}
-                                                >
-                                                    <Table.Cell py={6} fontWeight="semibold" color="zazuu.purple">
-                                                        {product.name}
-                                                    </Table.Cell>
-                                                    <Table.Cell py={6} color="gray.500" fontSize="sm" maxW="400px">
-                                                        {product.description}
-                                                    </Table.Cell>
-                                                    <Table.Cell py={6} textAlign="end" fontWeight="bold">
-                                                        R$ {Number(product.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                                                    </Table.Cell>
-                                                    <Table.Cell py={6} textAlign="end">
-                                                        <HStack gap={3} justify="end">
-                                                            <MotionIconButton
-                                                                whileHover={{ scale: 1.05 }}
-                                                                whileTap={{ scale: 0.95 }}
-                                                                aria-label="Editar" size="sm" variant="outline"
-                                                                rounded="full"
-                                                                onClick={() => handleEditClick(product)}
-                                                                borderColor="gray.100"
-                                                                color="zazuu.purple"
-                                                                opacity="0.6"
-                                                                _groupHover={{ opacity: 1 }}
-                                                                _hover={{ 
-                                                                    backgroundColor: 'white', 
-                                                                    borderColor: 'gray.200',
-                                                                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)" 
-                                                                }}
-                                                                transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] } as any}
-                                                            >
-                                                                <Edit3 size={16} />
-                                                            </MotionIconButton>
-                                                            <MotionIconButton
-                                                                whileHover={{ scale: 1.05 }}
-                                                                whileTap={{ scale: 0.95 }}
-                                                                aria-label="Deletar" size="sm" variant="ghost"
-                                                                rounded="full"
-                                                                color="gray.400"
-                                                                opacity="0.6"
-                                                                _groupHover={{ opacity: 1 }}
-                                                                onClick={() => triggerDelete(product)}
-                                                                _hover={{ 
-                                                                    backgroundColor: 'red.50', 
-                                                                    color: 'red.500', 
-                                                                    boxShadow: "0 4px 12px rgba(220, 38, 38, 0.1)" 
-                                                                }}
-                                                                transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] } as any}
-                                                            >
-                                                                <Trash2 size={16} />
-                                                            </MotionIconButton>
-                                                        </HStack>
-                                                    </Table.Cell>
-                                                </MotionTableRow>
-                                            ))
-                                        ) : (
-                                            <Table.Row>
-                                                <Table.Cell colSpan={4} textAlign="center" py={20}>
-                                                    <VStack gap={2}>
-                                                        <Text color="gray.400" fontSize="lg">Nenhum produto encontrado.</Text>
-                                                        <Button variant="ghost" color="zazuu.purple" onClick={() => setSearchTerm('')}>
-                                                            Limpar filtros
-                                                        </Button>
-                                                    </VStack>
-                                                </Table.Cell>
+                        <Stack direction={{ base: 'column', md: 'row' }} gap={3} w={{ base: 'full', md: 'auto' }} align="stretch">
+                            <Button
+                                variant="outline"
+                                h="56px"
+                                px={6}
+                                rounded="2xl"
+                                borderColor="gray.200"
+                                color="gray.600"
+                                onClick={filterDrawer.onOpen}
+                                _hover={{ bg: 'gray.50' }}
+                                w={{ base: 'full', md: 'auto' }}
+                                minW={{ md: "120px" }}
+                            >
+                                <Filter size={18} style={{ marginRight: '8px' }} /> Filtros
+                            </Button>
+
+                            <MotionButton
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.2, type: "spring", stiffness: 400, damping: 25 }}
+                                whileHover={{ scale: 1.02, translateY: -2, boxShadow: "0 10px 20px rgba(193, 226, 69, 0.2)" }}
+                                whileTap={{ scale: 0.98 }}
+                                bg="zazuu.lime"
+                                color="#292929"
+                                rounded="2xl"
+                                px={{ base: 6, md: 8 }}
+                                h="56px"
+                                fontWeight="bold"
+                                boxShadow="subtle"
+                                onClick={handleNewClick}
+                                _hover={{ bg: '#c1e245' }}
+                                w={{ base: 'full', md: 'auto' }}
+                            >
+                                <Plus size={20} style={{ marginRight: '8px' }} /> Novo Produto
+                            </MotionButton>
+                        </Stack>
+                    </Stack>
+
+                    {/* Smart Transmutation Section */}
+                    {loading && products.length === 0 ? (
+                        <Box>
+                            <Box display={{ base: 'none', md: 'block' }}>
+                                <Box overflowX="auto" rounded="2xl" border="1px solid" borderColor="gray.100">
+                                    <Table.Root variant="line">
+                                        <Table.Header>
+                                            <Table.Row bg="gray.50/50">
+                                                <Table.ColumnHeader py={6} color="zazuu.purple" fontWeight="bold">PRODUTO</Table.ColumnHeader>
+                                                <Table.ColumnHeader py={6} color="zazuu.purple" fontWeight="bold">DESCRIÇÃO</Table.ColumnHeader>
+                                                <Table.ColumnHeader py={6} color="zazuu.purple" fontWeight="bold" textAlign="end">PREÇO</Table.ColumnHeader>
+                                                <Table.ColumnHeader py={6} color="zazuu.purple" fontWeight="bold" textAlign="end">AÇÕES</Table.ColumnHeader>
                                             </Table.Row>
-                                        )}
-                                    </AnimatePresence>
-                                )}
-                            </Table.Body>
-                        </Table.Root>
-                    </Box>
+                                        </Table.Header>
+                                        <Table.Body>
+                                            <TableSkeleton />
+                                        </Table.Body>
+                                    </Table.Root>
+                                </Box>
+                            </Box>
+                            <Box display={{ base: 'block', md: 'none' }}>
+                                <CardSkeleton />
+                            </Box>
+                        </Box>
+                    ) : (
+                        <Box>
+                            {products.length > 0 ? (
+                                <>
+                                    {/* Desktop Table View */}
+                                    <Box display={{ base: 'none', md: 'block' }} overflowX="auto" rounded="2xl" border="1px solid" borderColor="gray.100">
+                                        <Table.Root variant="line">
+                                            <Table.Header>
+                                                <Table.Row bg="gray.50/50">
+                                                    <Table.ColumnHeader py={6} color="zazuu.purple" fontWeight="bold">PRODUTO</Table.ColumnHeader>
+                                                    <Table.ColumnHeader py={6} color="zazuu.purple" fontWeight="bold">DESCRIÇÃO</Table.ColumnHeader>
+                                                    <Table.ColumnHeader py={6} color="zazuu.purple" fontWeight="bold" textAlign="end">PREÇO</Table.ColumnHeader>
+                                                    <Table.ColumnHeader py={6} color="zazuu.purple" fontWeight="bold" textAlign="end">AÇÕES</Table.ColumnHeader>
+                                                </Table.Row>
+                                            </Table.Header>
+                                            <Table.Body>
+                                                <AnimatePresence mode="popLayout">
+                                                    {products.map((product, index) => (
+                                                        <MotionTableRow
+                                                            key={product.id}
+                                                            initial={{ opacity: 0, y: 10 }}
+                                                            animate={{
+                                                                opacity: 1,
+                                                                y: 0,
+                                                                transition: {
+                                                                    delay: index * 0.05,
+                                                                    duration: 0.5,
+                                                                    ease: [0.25, 1, 0.5, 1]
+                                                                }
+                                                            }}
+                                                            exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.2 } as any }}
+                                                            role="group"
+                                                            whileHover={{
+                                                                backgroundColor: 'rgba(50, 18, 77, 0.02)',
+                                                                y: -1,
+                                                            }}
+                                                            _hover={{
+                                                                boxShadow: 'sm'
+                                                            }}
+                                                            transition={{
+                                                                duration: 0.4,
+                                                                ease: [0.25, 1, 0.5, 1]
+                                                            } as any}
+                                                        >
+                                                            <Table.Cell py={6} fontWeight="semibold" color="zazuu.purple">
+                                                                {product.name}
+                                                            </Table.Cell>
+                                                            <Table.Cell py={6} color="gray.500" fontSize="sm" maxW="400px">
+                                                                {product.description}
+                                                            </Table.Cell>
+                                                            <Table.Cell py={6} textAlign="end" fontWeight="bold">
+                                                                R$ {Number(product.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                                            </Table.Cell>
+                                                            <Table.Cell py={6} textAlign="end">
+                                                                <HStack gap={3} justify="end">
+                                                                    <MotionIconButton
+                                                                        whileHover={{ scale: 1.05 }}
+                                                                        whileTap={{ scale: 0.95 }}
+                                                                        aria-label="Editar" size="sm" variant="outline"
+                                                                        rounded="full"
+                                                                        onClick={() => handleEditClick(product)}
+                                                                        borderColor="gray.100"
+                                                                        color="zazuu.purple"
+                                                                        opacity="0.6"
+                                                                        _groupHover={{ opacity: 1 }}
+                                                                        _hover={{
+                                                                            backgroundColor: 'white',
+                                                                            borderColor: 'gray.200',
+                                                                            boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
+                                                                        }}
+                                                                        transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] } as any}
+                                                                    >
+                                                                        <Edit3 size={16} />
+                                                                    </MotionIconButton>
+                                                                    <MotionIconButton
+                                                                        whileHover={{ scale: 1.05 }}
+                                                                        whileTap={{ scale: 0.95 }}
+                                                                        aria-label="Deletar" size="sm" variant="ghost"
+                                                                        rounded="full"
+                                                                        color="gray.400"
+                                                                        opacity="0.6"
+                                                                        _groupHover={{ opacity: 1 }}
+                                                                        onClick={() => triggerDelete(product)}
+                                                                        _hover={{
+                                                                            backgroundColor: 'red.50',
+                                                                            color: 'red.500',
+                                                                            boxShadow: "0 4px 12px rgba(220, 38, 38, 0.1)"
+                                                                        }}
+                                                                        transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] } as any}
+                                                                    >
+                                                                        <Trash2 size={16} />
+                                                                    </MotionIconButton>
+                                                                </HStack>
+                                                            </Table.Cell>
+                                                        </MotionTableRow>
+                                                    ))}
+                                                </AnimatePresence>
+                                            </Table.Body>
+                                        </Table.Root>
+                                    </Box>
+
+                                    {/* Mobile Cards View */}
+                                    <Box display={{ base: 'block', md: 'none' }}>
+                                        <VStack gap={4}>
+                                            <AnimatePresence mode="popLayout">
+                                                {products.map((product, index) => (
+                                                    <ProductCard
+                                                        key={`card-${product.id}`}
+                                                        product={product}
+                                                        onEdit={handleEditClick}
+                                                        onDelete={triggerDelete}
+                                                        index={index}
+                                                    />
+                                                ))}
+                                            </AnimatePresence>
+                                        </VStack>
+                                    </Box>
+                                </>
+                            ) : (
+                                <EmptyState onAction={handleNewClick} />
+                            )}
+                        </Box>
+                    )}
                 </MotionBox>
             </Container>
 

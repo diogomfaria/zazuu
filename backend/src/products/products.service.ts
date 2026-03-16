@@ -57,4 +57,20 @@ export class ProductsService {
 
         return product;
     }
+} return this.prisma.product.delete({ where: { id } });
+    }
+
+    private async verifyOwnership(productId: string, userId: string) {
+    const product = await this.prisma.product.findUnique({ where: { id: productId } });
+
+    if (!product) {
+        throw new NotFoundException('Produto não encontrado');
+    }
+
+    if (product.userId !== userId) {
+        throw new ForbiddenException('Você não tem permissão para alterar este produto');
+    }
+
+    return product;
+}
 }
