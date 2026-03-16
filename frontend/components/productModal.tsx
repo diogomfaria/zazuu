@@ -89,13 +89,16 @@ function ProductForm({ productToEdit, onSuccess, onClose }: ProductFormProps) {
                             rounded="xl"
                             size="lg"
                             borderColor="gray.200"
+                            _placeholder={{ color: "gray.400", transition: "color 0.2s" }}
                             _focus={{
-                                borderColor: "#32124d",
-                                boxShadow: "0 0 0 1px #32124d",
-                                bg: "white"
+                                borderColor: "zazuu.purple",
+                                boxShadow: "0 0 0 4px rgba(50, 18, 77, 0.08)",
+                                bg: "white",
+                                outline: "none",
+                                _placeholder: { color: "gray.300" }
                             }}
                             _hover={{ borderColor: "gray.300" }}
-                            transition="all 0.2s"
+                            transition="all 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
                         />
                     </Box>
 
@@ -110,13 +113,16 @@ function ProductForm({ productToEdit, onSuccess, onClose }: ProductFormProps) {
                             size="lg"
                             minH="120px"
                             borderColor="gray.200"
+                            _placeholder={{ color: "gray.400", transition: "color 0.2s" }}
                             _focus={{
-                                borderColor: "#32124d",
-                                boxShadow: "0 0 0 1px #32124d",
-                                bg: "white"
+                                borderColor: "zazuu.purple",
+                                boxShadow: "0 0 0 4px rgba(50, 18, 77, 0.08)",
+                                bg: "white",
+                                outline: "none",
+                                _placeholder: { color: "gray.300" }
                             }}
                             _hover={{ borderColor: "gray.300" }}
-                            transition="all 0.2s"
+                            transition="all 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
                         />
                     </Box>
 
@@ -139,13 +145,16 @@ function ProductForm({ productToEdit, onSuccess, onClose }: ProductFormProps) {
                             size="lg"
                             inputMode="numeric"
                             borderColor="gray.200"
+                            _placeholder={{ color: "gray.400", transition: "color 0.2s" }}
                             _focus={{
-                                borderColor: "#32124d",
-                                boxShadow: "0 0 0 1px #32124d",
-                                bg: "white"
+                                borderColor: "zazuu.purple",
+                                boxShadow: "0 0 0 4px rgba(50, 18, 77, 0.08)",
+                                bg: "white",
+                                outline: "none",
+                                _placeholder: { color: "gray.300" }
                             }}
                             _hover={{ borderColor: "gray.300" }}
-                            transition="all 0.2s"
+                            transition="all 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
                         />
                     </Box>
                 </VStack>

@@ -147,16 +147,20 @@ export default function AuthPage() {
                                                 required 
                                                 value={email} 
                                                 onChange={(e) => setEmail(e.target.value)} 
+                                                placeholder="seu@email.com"
                                                 rounded="xl"
                                                 size="lg"
+                                                borderColor="gray.200"
+                                                _placeholder={{ color: "gray.400", transition: "color 0.2s" }}
                                                 _focus={{ 
                                                     borderColor: "zazuu.purple", 
-                                                    boxShadow: "0 0 0 2px rgba(50, 18, 77, 0.1)",
-                                                    bg: "white"
+                                                    boxShadow: "0 0 0 4px rgba(50, 18, 77, 0.08)",
+                                                    bg: "white",
+                                                    outline: "none",
+                                                    _placeholder: { color: "gray.300" }
                                                 }}
                                                 _hover={{ borderColor: "gray.300" }}
-                                                transition="all 0.2s"
-                                                placeholder="seu@email.com"
+                                                transition="all 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
                                             />
                                         </Box>
                                         <Box w="full">
@@ -166,16 +170,20 @@ export default function AuthPage() {
                                                 required 
                                                 value={password} 
                                                 onChange={(e) => setPassword(e.target.value)} 
+                                                placeholder="••••••••"
                                                 rounded="xl"
                                                 size="lg"
+                                                borderColor="gray.200"
+                                                _placeholder={{ color: "gray.400", transition: "color 0.2s" }}
                                                 _focus={{ 
                                                     borderColor: "zazuu.purple", 
-                                                    boxShadow: "0 0 0 2px rgba(50, 18, 77, 0.1)",
-                                                    bg: "white"
+                                                    boxShadow: "0 0 0 4px rgba(50, 18, 77, 0.08)",
+                                                    bg: "white",
+                                                    outline: "none",
+                                                    _placeholder: { color: "gray.300" }
                                                 }}
                                                 _hover={{ borderColor: "gray.300" }}
-                                                placeholder="••••••••"
-                                                transition="all 0.2s"
+                                                transition="all 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
                                             />
                                         </Box>
                                         <MotionButton 
@@ -202,7 +210,7 @@ export default function AuthPage() {
                                                         initial={{ opacity: 0, y: 10 }}
                                                         animate={{ opacity: 1, y: 0 }}
                                                         exit={{ opacity: 0, y: -10 }}
-                                                        className="flex items-center gap-2"
+                                                        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                                                     >
                                                         <motion.span
                                                             animate={{ opacity: [0.4, 1, 0.4] }}
@@ -242,16 +250,20 @@ export default function AuthPage() {
                                                 required 
                                                 value={name} 
                                                 onChange={(e) => setName(e.target.value)} 
+                                                placeholder="Nome completo"
                                                 rounded="xl"
                                                 size="lg"
+                                                borderColor="gray.200"
+                                                _placeholder={{ color: "gray.400", transition: "color 0.2s" }}
                                                 _focus={{ 
                                                     borderColor: "zazuu.purple", 
-                                                    boxShadow: "0 0 0 2px rgba(50, 18, 77, 0.1)",
-                                                    bg: "white"
+                                                    boxShadow: "0 0 0 4px rgba(50, 18, 77, 0.08)",
+                                                    bg: "white",
+                                                    outline: "none",
+                                                    _placeholder: { color: "gray.300" }
                                                 }}
                                                 _hover={{ borderColor: "gray.300" }}
-                                                placeholder="Nome completo"
-                                                transition="all 0.2s"
+                                                transition="all 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
                                             />
                                         </Box>
                                         <Box w="full">
@@ -261,16 +273,20 @@ export default function AuthPage() {
                                                 required 
                                                 value={email} 
                                                 onChange={(e) => setEmail(e.target.value)} 
+                                                placeholder="seu@email.com"
                                                 rounded="xl"
                                                 size="lg"
+                                                borderColor="gray.200"
+                                                _placeholder={{ color: "gray.400", transition: "color 0.2s" }}
                                                 _focus={{ 
                                                     borderColor: "zazuu.purple", 
-                                                    boxShadow: "0 0 0 2px rgba(50, 18, 77, 0.1)",
-                                                    bg: "white"
+                                                    boxShadow: "0 0 0 4px rgba(50, 18, 77, 0.08)",
+                                                    bg: "white",
+                                                    outline: "none",
+                                                    _placeholder: { color: "gray.300" }
                                                 }}
                                                 _hover={{ borderColor: "gray.300" }}
-                                                transition="all 0.2s"
-                                                placeholder="seu@email.com"
+                                                transition="all 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
                                             />
                                         </Box>
                                         <Box w="full">
@@ -280,15 +296,19 @@ export default function AuthPage() {
                                                 required 
                                                 value={password} 
                                                 onChange={(e) => setPassword(e.target.value)} 
+                                                placeholder="Crie uma senha forte"
                                                 rounded="xl"
                                                 size="lg"
+                                                borderColor="gray.200"
+                                                _placeholder={{ color: "gray.400", transition: "color 0.2s" }}
                                                 _focus={{ 
                                                     borderColor: "zazuu.purple", 
-                                                    boxShadow: "0 0 0 2px rgba(50, 18, 77, 0.1)",
-                                                    bg: "white"
+                                                    boxShadow: "0 0 0 4px rgba(50, 18, 77, 0.08)",
+                                                    bg: "white",
+                                                    outline: "none",
+                                                    _placeholder: { color: "gray.300" }
                                                 }}
                                                 _hover={{ borderColor: "gray.300" }}
-                                                placeholder="Crie uma senha forte"
                                                 transition="all 0.2s"
                                             />
                                         </Box>
@@ -316,7 +336,7 @@ export default function AuthPage() {
                                                         initial={{ opacity: 0, y: 10 }}
                                                         animate={{ opacity: 1, y: 0 }}
                                                         exit={{ opacity: 0, y: -10 }}
-                                                        className="flex items-center gap-2"
+                                                        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                                                     >
                                                         <motion.span
                                                             animate={{ opacity: [0.4, 1, 0.4] }}

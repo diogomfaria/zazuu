@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { api } from '@/services/api';
 import { ProductModal } from '@/components/productModal';
 import { ConfirmationModal } from '@/components/confirmationModal';
+import { FilterDrawer } from '@/components/filterDrawer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Logo } from '@/components/logo';
 
@@ -33,6 +34,10 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
 
+    // Filter states
+    const [priceFilters, setPriceFilters] = useState({ minPrice: '', maxPrice: '' });
+    const filterDrawer = useDisclosure();
+
     // Selection state for deletion
     const [productToDelete, setProductToDelete] = useState<Product | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -42,7 +47,7 @@ export default function DashboardPage() {
     const productModal = useDisclosure();
     const router = useRouter();
 
-    const fetchProducts = useCallback(async (search = '') => {
+    const fetchProducts = useCallback(async (search = '', minP = '', maxP = '') => {
         setLoading(true);
         try {
             // Consolidating search for name and description
@@ -53,11 +58,21 @@ export default function DashboardPage() {
 
             const { data } = await api.get('/products', { params });
 
-            // Client-side filtering enhancement if needed
-            const filtered = data.filter((p: Product) =>
+            // Client-side filtering enhancement
+            let filtered = data.filter((p: Product) =>
                 p.name.toLowerCase().includes(search.toLowerCase()) ||
                 p.description.toLowerCase().includes(search.toLowerCase())
             );
+
+            // Price filtering
+            if (minP) {
+                const min = parseFloat(minP.replace(',', '.'));
+                filtered = filtered.filter((p: Product) => Number(p.price) >= min);
+            }
+            if (maxP) {
+                const max = parseFloat(maxP.replace(',', '.'));
+                filtered = filtered.filter((p: Product) => Number(p.price) <= max);
+            }
 
             setProducts(filtered);
         } catch (error) {
@@ -69,11 +84,11 @@ export default function DashboardPage() {
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
-            fetchProducts(searchTerm);
+            fetchProducts(searchTerm, priceFilters.minPrice, priceFilters.maxPrice);
         }, 400);
 
         return () => clearTimeout(delayDebounceFn);
-    }, [searchTerm, fetchProducts]);
+    }, [searchTerm, priceFilters, fetchProducts]);
 
     useEffect(() => {
         const token = localStorage.getItem('@Zazuu:token');
@@ -203,11 +218,15 @@ export default function DashboardPage() {
                                 h="56px"
                                 rounded="2xl"
                                 bg="gray.50"
-                                border="none"
+                                border="1px solid"
+                                borderColor="transparent"
+                                _placeholder={{ color: "gray.400", transition: "color 0.2s" }}
                                 _focus={{
                                     bg: "white",
-                                    boxShadow: "0 0 0 2px rgba(50, 18, 77, 0.1)",
-                                    borderColor: "zazuu.purple"
+                                    borderColor: "zazuu.purple",
+                                    boxShadow: "0 0 0 4px rgba(50, 18, 77, 0.08)",
+                                    outline: "none",
+                                    _placeholder: { color: "gray.300" }
                                 }}
                                 transition="all 0.3s"
                             />
@@ -222,6 +241,7 @@ export default function DashboardPage() {
                             rounded="2xl"
                             borderColor="gray.200"
                             color="gray.600"
+                            onClick={filterDrawer.onOpen}
                             _hover={{ bg: 'gray.50' }}
                         >
                             <Filter size={18} style={{ marginRight: '8px' }} /> Filtros
@@ -262,12 +282,23 @@ export default function DashboardPage() {
                                                         y: 0,
                                                         transition: { 
                                                             delay: index * 0.05,
-                                                            duration: 0.4,
-                                                            ease: "easeOut"
+                                                            duration: 0.5,
+                                                            ease: [0.25, 1, 0.5, 1]
                                                         }
                                                     }}
                                                     exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.2 } as any }}
-                                                    _hover={{ bg: 'gray.50/80' }}
+                                                    role="group"
+                                                    whileHover={{ 
+                                                        backgroundColor: 'rgba(50, 18, 77, 0.02)',
+                                                        y: -1,
+                                                    }}
+                                                    _hover={{ 
+                                                        boxShadow: 'sm'
+                                                    }}
+                                                    transition={{ 
+                                                        duration: 0.4, 
+                                                        ease: [0.25, 1, 0.5, 1] 
+                                                    } as any}
                                                 >
                                                     <Table.Cell py={6} fontWeight="semibold" color="zazuu.purple">
                                                         {product.name}
@@ -281,23 +312,39 @@ export default function DashboardPage() {
                                                     <Table.Cell py={6} textAlign="end">
                                                         <HStack gap={3} justify="end">
                                                             <MotionIconButton
-                                                                whileHover={{ scale: 1.1, backgroundColor: 'white', boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
-                                                                whileTap={{ scale: 0.9 }}
+                                                                whileHover={{ scale: 1.05 }}
+                                                                whileTap={{ scale: 0.95 }}
                                                                 aria-label="Editar" size="sm" variant="outline"
                                                                 rounded="full"
                                                                 onClick={() => handleEditClick(product)}
                                                                 borderColor="gray.100"
                                                                 color="zazuu.purple"
+                                                                opacity="0.6"
+                                                                _groupHover={{ opacity: 1 }}
+                                                                _hover={{ 
+                                                                    backgroundColor: 'white', 
+                                                                    borderColor: 'gray.200',
+                                                                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)" 
+                                                                }}
+                                                                transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] } as any}
                                                             >
                                                                 <Edit3 size={16} />
                                                             </MotionIconButton>
                                                             <MotionIconButton
-                                                                whileHover={{ scale: 1.1, backgroundColor: 'rgba(254, 242, 242, 1)', color: 'rgba(220, 38, 38, 1)', boxShadow: "0 4px 12px rgba(220, 38, 38, 0.1)" }}
-                                                                whileTap={{ scale: 0.9 }}
+                                                                whileHover={{ scale: 1.05 }}
+                                                                whileTap={{ scale: 0.95 }}
                                                                 aria-label="Deletar" size="sm" variant="ghost"
                                                                 rounded="full"
                                                                 color="gray.400"
+                                                                opacity="0.6"
+                                                                _groupHover={{ opacity: 1 }}
                                                                 onClick={() => triggerDelete(product)}
+                                                                _hover={{ 
+                                                                    backgroundColor: 'red.50', 
+                                                                    color: 'red.500', 
+                                                                    boxShadow: "0 4px 12px rgba(220, 38, 38, 0.1)" 
+                                                                }}
+                                                                transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] } as any}
                                                             >
                                                                 <Trash2 size={16} />
                                                             </MotionIconButton>
@@ -340,6 +387,14 @@ export default function DashboardPage() {
                 title="Confirmar Exclusão"
                 description={`Tem certeza que deseja excluir "${productToDelete?.name}"? Esta ação não pode ser desfeita.`}
                 loading={isDeleting}
+            />
+
+            <FilterDrawer
+                isOpen={filterDrawer.open}
+                onClose={filterDrawer.onClose}
+                filters={priceFilters}
+                onApply={(filters) => setPriceFilters(filters)}
+                onReset={() => setPriceFilters({ minPrice: '', maxPrice: '' })}
             />
         </Box>
     );
