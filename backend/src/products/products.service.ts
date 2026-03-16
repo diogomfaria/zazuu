@@ -19,10 +19,13 @@ export class ProductsService {
     async findAll(filters: FilterProductDto, userId: string) {
         return this.prisma.product.findMany({
             where: {
-                userId, // Filtra pelo usuário logado
+                userId,
                 name: filters.name ? { contains: filters.name, mode: 'insensitive' } : undefined,
                 description: filters.description ? { contains: filters.description, mode: 'insensitive' } : undefined,
-                price: filters.price ? parseFloat(filters.price) : undefined,
+                price: {
+                    gte: filters.minPrice ? parseFloat(filters.minPrice) : undefined,
+                    lte: filters.maxPrice ? parseFloat(filters.maxPrice) : undefined,
+                },
             },
             orderBy: { createdAt: 'desc' },
         });

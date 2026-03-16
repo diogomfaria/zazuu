@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --color-zazuu-purple: #4F2A93;
+  --color-zazuu-lime: #B2D235;
+  --color-zazuu-teal: #507A6D;
+  --color-zazuu-dark: #292929;
+  --color-zazuu-bg: #F7F7F7;
+  
+  --font-outfit: "Outfit", sans-serif;
+}
+
+:root {
+  --background: #F7F7F7;
+  --foreground: #292929;
+  --zazuu-purple: #4F2A93;
+  --zazuu-lime: #B2D235;
+}
+
+body {
+  font-family: var(--font-outfit);
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Custom Utilities if needed */
+.bg-zazuu-purple { background-color: #4F2A93; }
+.text-zazuu-purple { color: #4F2A93; }
+.bg-zazuu-lime { background-color: #B2D235; }
+.text-zazuu-lime { color: #B2D235; }

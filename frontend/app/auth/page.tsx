@@ -4,14 +4,21 @@ import { useState } from 'react';
 import { Box, Button, Input, VStack, Heading, Text, Tabs, Container, createToaster } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/services/api';
+import { motion, AnimatePresence } from 'framer-motion';
+
+import { Logo } from '@/components/logo';
 
 const toaster = createToaster({ placement: 'bottom-end' });
+
+const MotionBox = motion(Box);
+const MotionButton = motion(Button);
 
 export default function AuthPage() {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
+    const [activeTab, setActiveTab] = useState('login');
     const router = useRouter();
 
     const handleAuth = async (mode: 'login' | 'register') => {
@@ -41,56 +48,302 @@ export default function AuthPage() {
     };
 
     return (
-        <Container maxW="md" centerContent py={20}>
-            <Box p={8} borderWidth={1} borderRadius={8} boxShadow="lg" w="100%" bg="white">
-                <VStack mb={6}>
-                    <Heading size="lg">Zazuu Admin</Heading>
-                    <Text color="gray.500">Gerencie seus produtos pet</Text>
-                </VStack>
+        <Box minH="100vh" bg="brand.bg" className="font-outfit" py={32}>
+            <Container maxW="md">
+                <MotionBox 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    p={12} 
+                    borderRadius="3xl" 
+                    boxShadow="subtle" 
+                    w="100%" 
+                    bg="white"
+                    border="1px solid"
+                    borderColor="gray.100"
+                >
+                    <VStack mb={8} gap={2}>
+                        <Logo width={160} height={60} />
+                        <Text color="gray.500" fontSize="lg">Gerencie seus produtos pet</Text>
+                    </VStack>
 
-                <Tabs.Root defaultValue="login" fitted variant="enclosed">
-                    <Tabs.List mb="1em">
-                        <Tabs.Trigger value="login">Login</Tabs.Trigger>
-                        <Tabs.Trigger value="register">Cadastro</Tabs.Trigger>
-                    </Tabs.List>
+                    <Tabs.Root value={activeTab} onValueChange={(e) => setActiveTab(e.value)} fitted variant="plain">
+                        <Tabs.List mb={8} bg="gray.100" p={1.5} rounded="full" position="relative" gap={1}>
+                            <Tabs.Trigger 
+                                value="login" 
+                                zIndex={1}
+                                rounded="full" 
+                                fontWeight="bold"
+                                color={activeTab === 'login' ? 'white' : 'gray.500'}
+                                transition="color 0.3s ease"
+                                _hover={{ color: activeTab === 'login' ? 'white' : 'zazuu.purple' }}
+                                py={2.5}
+                                flex={1}
+                                position="relative"
+                            >
+                                Login
+                                {activeTab === 'login' && (
+                                    <motion.div
+                                        layoutId="active-pill"
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0,
+                                            backgroundColor: '#32124d',
+                                            borderRadius: '9999px',
+                                            zIndex: -1
+                                        }}
+                                        transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                                    />
+                                )}
+                            </Tabs.Trigger>
+                            <Tabs.Trigger 
+                                value="register" 
+                                zIndex={1}
+                                rounded="full" 
+                                fontWeight="bold"
+                                color={activeTab === 'register' ? 'white' : 'gray.500'}
+                                transition="color 0.3s ease"
+                                _hover={{ color: activeTab === 'register' ? 'white' : 'zazuu.purple' }}
+                                py={2.5}
+                                flex={1}
+                                position="relative"
+                            >
+                                Cadastro
+                                {activeTab === 'register' && (
+                                    <motion.div
+                                        layoutId="active-pill"
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0,
+                                            backgroundColor: '#32124d',
+                                            borderRadius: '9999px',
+                                            zIndex: -1
+                                        }}
+                                        transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                                    />
+                                )}
+                            </Tabs.Trigger>
+                        </Tabs.List>
 
-                    <Tabs.Content value="login">
-                        <VStack gap={4}>
-                            <Box w="full">
-                                <Text fontWeight="medium" mb={1} as="label">E-mail</Text>
-                                <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-                            </Box>
-                            <Box w="full">
-                                <Text fontWeight="medium" mb={1} as="label">Senha</Text>
-                                <Input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-                            </Box>
-                            <Button colorScheme="blue" w="100%" loading={loading} onClick={() => handleAuth('login')}>
-                                Entrar
-                            </Button>
-                        </VStack>
-                    </Tabs.Content>
+                        <AnimatePresence mode="wait">
+                            <Tabs.Content value="login" key="login">
+                                <MotionBox
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: 10 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <VStack gap={6}>
+                                        <Box w="full">
+                                            <Text fontWeight="semibold" mb={2} as="label">E-mail</Text>
+                                            <Input 
+                                                type="email" 
+                                                required 
+                                                value={email} 
+                                                onChange={(e) => setEmail(e.target.value)} 
+                                                rounded="xl"
+                                                size="lg"
+                                                _focus={{ 
+                                                    borderColor: "zazuu.purple", 
+                                                    boxShadow: "0 0 0 2px rgba(50, 18, 77, 0.1)",
+                                                    bg: "white"
+                                                }}
+                                                _hover={{ borderColor: "gray.300" }}
+                                                transition="all 0.2s"
+                                                placeholder="seu@email.com"
+                                            />
+                                        </Box>
+                                        <Box w="full">
+                                            <Text fontWeight="semibold" mb={2} as="label">Senha</Text>
+                                            <Input 
+                                                type="password" 
+                                                required 
+                                                value={password} 
+                                                onChange={(e) => setPassword(e.target.value)} 
+                                                rounded="xl"
+                                                size="lg"
+                                                _focus={{ 
+                                                    borderColor: "zazuu.purple", 
+                                                    boxShadow: "0 0 0 2px rgba(50, 18, 77, 0.1)",
+                                                    bg: "white"
+                                                }}
+                                                _hover={{ borderColor: "gray.300" }}
+                                                placeholder="••••••••"
+                                                transition="all 0.2s"
+                                            />
+                                        </Box>
+                                        <MotionButton 
+                                            whileHover={!loading ? { scale: 1.01, translateY: -1 } : {}}
+                                            whileTap={!loading ? { scale: 0.99 } : {}}
+                                            bg="zazuu.purple" 
+                                            color="white"
+                                            w="100%" 
+                                            size="lg"
+                                            rounded="full"
+                                            fontWeight="bold"
+                                            onClick={() => !loading && handleAuth('login')}
+                                            _hover={{ bg: '#250d3a' }}
+                                            mt={4}
+                                            position="relative"
+                                            overflow="hidden"
+                                            disabled={loading}
+                                            cursor={loading ? "not-allowed" : "pointer"}
+                                        >
+                                            <AnimatePresence mode="wait">
+                                                {loading ? (
+                                                    <motion.div
+                                                        key="loading"
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, y: -10 }}
+                                                        className="flex items-center gap-2"
+                                                    >
+                                                        <motion.span
+                                                            animate={{ opacity: [0.4, 1, 0.4] }}
+                                                            transition={{ repeat: Infinity, duration: 1.5 }}
+                                                        >
+                                                            Autenticando...
+                                                        </motion.span>
+                                                    </motion.div>
+                                                ) : (
+                                                    <motion.span
+                                                        key="text"
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, y: -10 }}
+                                                    >
+                                                        Entrar
+                                                    </motion.span>
+                                                )}
+                                            </AnimatePresence>
+                                        </MotionButton>
+                                    </VStack>
+                                </MotionBox>
+                            </Tabs.Content>
 
-                    <Tabs.Content value="register">
-                        <VStack gap={4}>
-                            <Box w="full">
-                                <Text fontWeight="medium" mb={1} as="label">Nome</Text>
-                                <Input type="text" required value={name} onChange={(e) => setName(e.target.value)} />
-                            </Box>
-                            <Box w="full">
-                                <Text fontWeight="medium" mb={1} as="label">E-mail</Text>
-                                <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-                            </Box>
-                            <Box w="full">
-                                <Text fontWeight="medium" mb={1} as="label">Senha</Text>
-                                <Input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-                            </Box>
-                            <Button colorScheme="green" w="100%" loading={loading} onClick={() => handleAuth('register')}>
-                                Criar Conta
-                            </Button>
-                        </VStack>
-                    </Tabs.Content>
-                </Tabs.Root>
-            </Box>
-        </Container>
+                            <Tabs.Content value="register" key="register">
+                                <MotionBox
+                                    initial={{ opacity: 0, x: 10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -10 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <VStack gap={6}>
+                                        <Box w="full">
+                                            <Text fontWeight="semibold" mb={2} as="label">Nome</Text>
+                                            <Input 
+                                                type="text" 
+                                                required 
+                                                value={name} 
+                                                onChange={(e) => setName(e.target.value)} 
+                                                rounded="xl"
+                                                size="lg"
+                                                _focus={{ 
+                                                    borderColor: "zazuu.purple", 
+                                                    boxShadow: "0 0 0 2px rgba(50, 18, 77, 0.1)",
+                                                    bg: "white"
+                                                }}
+                                                _hover={{ borderColor: "gray.300" }}
+                                                placeholder="Nome completo"
+                                                transition="all 0.2s"
+                                            />
+                                        </Box>
+                                        <Box w="full">
+                                            <Text fontWeight="semibold" mb={2} as="label">E-mail</Text>
+                                            <Input 
+                                                type="email" 
+                                                required 
+                                                value={email} 
+                                                onChange={(e) => setEmail(e.target.value)} 
+                                                rounded="xl"
+                                                size="lg"
+                                                _focus={{ 
+                                                    borderColor: "zazuu.purple", 
+                                                    boxShadow: "0 0 0 2px rgba(50, 18, 77, 0.1)",
+                                                    bg: "white"
+                                                }}
+                                                _hover={{ borderColor: "gray.300" }}
+                                                transition="all 0.2s"
+                                                placeholder="seu@email.com"
+                                            />
+                                        </Box>
+                                        <Box w="full">
+                                            <Text fontWeight="semibold" mb={2} as="label">Senha</Text>
+                                            <Input 
+                                                type="password" 
+                                                required 
+                                                value={password} 
+                                                onChange={(e) => setPassword(e.target.value)} 
+                                                rounded="xl"
+                                                size="lg"
+                                                _focus={{ 
+                                                    borderColor: "zazuu.purple", 
+                                                    boxShadow: "0 0 0 2px rgba(50, 18, 77, 0.1)",
+                                                    bg: "white"
+                                                }}
+                                                _hover={{ borderColor: "gray.300" }}
+                                                placeholder="Crie uma senha forte"
+                                                transition="all 0.2s"
+                                            />
+                                        </Box>
+                                        <MotionButton 
+                                            whileHover={!loading ? { scale: 1.01, translateY: -1 } : {}}
+                                            whileTap={!loading ? { scale: 0.99 } : {}}
+                                            bg="zazuu.lime" 
+                                            color="#292929"
+                                            w="100%" 
+                                            size="lg"
+                                            rounded="full"
+                                            fontWeight="bold"
+                                            onClick={() => !loading && handleAuth('register')}
+                                            _hover={{ bg: '#c1e245' }}
+                                            mt={4}
+                                            position="relative"
+                                            overflow="hidden"
+                                            disabled={loading}
+                                            cursor={loading ? "not-allowed" : "pointer"}
+                                        >
+                                            <AnimatePresence mode="wait">
+                                                {loading ? (
+                                                    <motion.div
+                                                        key="loading"
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, y: -10 }}
+                                                        className="flex items-center gap-2"
+                                                    >
+                                                        <motion.span
+                                                            animate={{ opacity: [0.4, 1, 0.4] }}
+                                                            transition={{ repeat: Infinity, duration: 1.5 }}
+                                                        >
+                                                            Criando conta...
+                                                        </motion.span>
+                                                    </motion.div>
+                                                ) : (
+                                                    <motion.span
+                                                        key="text"
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, y: -10 }}
+                                                    >
+                                                        Criar Conta
+                                                    </motion.span>
+                                                )}
+                                            </AnimatePresence>
+                                        </MotionButton>
+                                    </VStack>
+                                </MotionBox>
+                            </Tabs.Content>
+                        </AnimatePresence>
+                    </Tabs.Root>
+                </MotionBox>
+            </Container>
+        </Box>
     );
 }

@@ -10,5 +10,8 @@ export class FilterProductDto {
     description?: string;
 
     @IsOptional()
-    price?: string;
+    minPrice?: string;
+
+    @IsOptional()
+    maxPrice?: string;
 }
